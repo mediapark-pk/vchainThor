@@ -39,7 +39,7 @@ class Vchain
 
 
     /*Method To Send HTTP Request*/
-    private function callToCurl(string $queryString, array $params=[], string $httpMethod = "POST")
+    private function callToCurl(string $queryString, array $params = [], string $httpMethod = "POST")
     {
 
 
@@ -99,12 +99,36 @@ class Vchain
         return $this->callToCurl("/node/network/peers", $params, "GET");
 
     }
+
     /*Get Account Address Code*/
     public function accountAddressCode()
     {
-        return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code",[],"GET");
+        return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code", [], "GET");
     }
 
+    /*Get Account Address Code*/
+    public function accountAddressStorage($queryString)
+    {
+        $uri = self::generateURI("/accounts/q_s/code", $queryString);
+
+        return $this->callToCurl($uri, [], "GET");
+    }
+
+
+    /*Generate URI*/
+    /*@param */
+    private function generateURI(string $uri, array $queryString): string
+    {
+
+        $fullURI="";
+        for ($i = 0; $i < count($queryString); $i++) {
+
+            $fullURI = str_replace("q_s", $queryString[$i], $uri);
+
+        }
+        return $fullURI;
+
+    }
 
 
 }

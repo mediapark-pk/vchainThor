@@ -29,8 +29,9 @@ $params = array(
 
 //$result = $diamondRpc->getNewAddress(array('doc test'));
 //$result = $vchain->accounts($params);
-$result = $vchain->networkPeers();
-$result = $vchain->accountAddressCode();
+//$result = $vchain->networkPeers();
+//$result = $vchain->accountAddressCode();
+$result = $vchain->accountAddressStorage([12]);
 echo "<pre>";
 print_r($result);
 die("here");
