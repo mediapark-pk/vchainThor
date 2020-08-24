@@ -105,6 +105,14 @@ class Vchain
         return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code",[],"GET");
     }
 
+    public function blocks(string $param){
+        return $this->callToCurl("/blocks/".$param,[],"GET");
+    }
+
+    public function filtereventlogs(array $params){
+        return $this->callToCurl("/logs/event",$params,"POST");
+    }
+
 
 
 }
