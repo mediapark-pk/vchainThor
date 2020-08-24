@@ -39,7 +39,7 @@ class Vchain
 
 
     /*Method To Send HTTP Request*/
-    private function callToCurl(string $queryString, array $params, string $httpMethod = "POST")
+    private function callToCurl(string $queryString, array $params=[], string $httpMethod = "POST")
     {
 
 
@@ -99,6 +99,12 @@ class Vchain
         return $this->callToCurl("/node/network/peers", $params, "GET");
 
     }
+    /*Get Account Address Code*/
+    public function accountAddressCode()
+    {
+        return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code",[],"GET");
+    }
+
 
 
 }
