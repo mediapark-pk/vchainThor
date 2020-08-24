@@ -1,0 +1,139 @@
+[
+    {
+        "name": "comely-io/data-types",
+        "version": "1.0.34",
+        "version_normalized": "1.0.34.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/comely-io/data-types.git",
+            "reference": "833ecf364a99aa5cd161e0ebd1191860921834c6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/comely-io/data-types/zipball/833ecf364a99aa5cd161e0ebd1191860921834c6",
+            "reference": "833ecf364a99aa5cd161e0ebd1191860921834c6",
+            "shasum": ""
+        },
+        "require": {
+            "ext-bcmath": "*",
+            "ext-mbstring": "*",
+            "php": "^7.2"
+        },
+        "time": "2020-06-07T14:02:53+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Comely\\DataTypes\\": [
+                    "src"
+                ]
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Furqan A. Siddiqui",
+                "email": "hello@furqansiddiqui.com",
+                "homepage": "https://www.furqansiddiqui.com",
+                "role": "Author"
+            }
+        ],
+        "description": "PHP data types",
+        "homepage": "https://github.com/comely-io/data-types"
+    },
+    {
+        "name": "comely-io/http",
+        "version": "1.0.47",
+        "version_normalized": "1.0.47.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/comely-io/http.git",
+            "reference": "35691b7bf6fc8ac07ab3eab6ee0d17c114fdfeb2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/comely-io/http/zipball/35691b7bf6fc8ac07ab3eab6ee0d17c114fdfeb2",
+            "reference": "35691b7bf6fc8ac07ab3eab6ee0d17c114fdfeb2",
+            "shasum": ""
+        },
+        "require": {
+            "comely-io/data-types": "^1.0.21",
+            "comely-io/utils": "^1.0.10",
+            "ext-curl": "*",
+            "ext-json": "*",
+            "php": "^7.1"
+        },
+        "time": "2020-06-30T07:54:58+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Comely\\Http\\": [
+                    "src"
+                ]
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Furqan A. Siddiqui",
+                "email": "hello@furqansiddiqui.com",
+                "homepage": "https://www.furqansiddiqui.com",
+                "role": "Author"
+            }
+        ],
+        "description": "HTTP component for Comely Apps",
+        "homepage": "https://github.com/comely-io/http"
+    },
+    {
+        "name": "comely-io/utils",
+        "version": "1.2.10",
+        "version_normalized": "1.2.10.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/comely-io/utils.git",
+            "reference": "a831cd812d6b1ab0dcefe4313a1d2d18d8076da8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/comely-io/utils/zipball/a831cd812d6b1ab0dcefe4313a1d2d18d8076da8",
+            "reference": "a831cd812d6b1ab0dcefe4313a1d2d18d8076da8",
+            "shasum": ""
+        },
+        "require": {
+            "comely-io/data-types": "^1.0.23",
+            "ext-openssl": "*",
+            "php": "^7.1"
+        },
+        "time": "2019-11-12T05:59:53+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Comely\\Utils\\": [
+                    "src"
+                ]
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Furqan A. Siddiqui",
+                "email": "hello@furqansiddiqui.com",
+                "homepage": "https://www.furqansiddiqui.com",
+                "role": "Author"
+            }
+        ],
+        "description": "Utilities for Comely Apps",
+        "homepage": "https://github.com/comely-io/utils"
+    }
+]

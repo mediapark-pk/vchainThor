@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace VchainThorRpc;
+namespace VchainThor;
 
 use Comely\Http\Request;
 use Exception;
 
-class VchainRpc
+class Vchain
 {
 
     /** @var string */
@@ -29,7 +29,7 @@ class VchainRpc
      * @param string $username
      * @param string $password
      */
-    public function __construct(string $ip, int $port, string $username, string $password)
+    public function __construct(string $ip, int $port, ?string $username = "", ?string $password = "")
     {
         $this->ip = $ip;
         $this->port = $port;
@@ -39,8 +39,9 @@ class VchainRpc
 
 
     /*Method To Send HTTP Request*/
-    private function callToCurl(string $rpcMethodName, array $params, string $httpMethod = "POST")
+    private function callToCurl(string $queryString, array $params, string $httpMethod = "POST")
     {
+
 
         try {
             $url = self::generateUrl($this->ip, $this->port);
@@ -48,7 +49,8 @@ class VchainRpc
             return $e;
 
         }
-
+        /*Set Complete Url*/
+        $url .= $queryString;
 
         $request = new Request($httpMethod, $url);
 
@@ -59,18 +61,13 @@ class VchainRpc
             ->set("Accept", "application/json");
 
         /*Set Request Body/Params*/
-        $request->payload()
-            ->set("id", $this->id)
-            ->set("jsonrpc", $this->jsonRpc)
-            ->set("method", $rpcMethodName);
-        /*Check if params are given or not*/
-        $params ? $request->payload()->set("params", $params) : null;
+        $params ? $request->payload($params) : null;
 
 
         $request = $request->curl();
 
         /*Set Basic Authentication*/
-        $request->auth()->basic($this->username, $this->password);
+//        $request->auth()->basic($this->username, $this->password);
 
         /*Send The Request*/
         $response = $request->send();
@@ -90,9 +87,16 @@ class VchainRpc
         return $ip . ":" . $port;
     }
 
-    public function getInfo(?array $params = [])
+    public function accounts(?array $params = [])
     {
-        return $this->callToCurl("getinfo", $params);
+        return $this->callToCurl("/accounts/*", $params);
+
+    }
+
+    /*Get Network Peers*/
+    public function networkPeers(?array $params = [])
+    {
+        return $this->callToCurl("/node/network/peers", $params, "GET");
 
     }
 
