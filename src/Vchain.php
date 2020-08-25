@@ -41,8 +41,6 @@ class Vchain
     /*Method To Send HTTP Request*/
     private function callToCurl(string $queryString, array $params = [], string $httpMethod = "POST")
     {
-
-
         try {
             $url = self::generateUrl($this->ip, $this->port);
         } catch (Exception $e) {
@@ -106,6 +104,7 @@ class Vchain
         return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code", [], "GET");
     }
 
+
     /*Get Account Address Code*/
     public function accountAddressStorage($queryString)
     {
@@ -129,6 +128,17 @@ class Vchain
         return $fullURI;
 
     }
+
+    public function blocks(string $param){
+        return $this->callToCurl("/blocks/".$param,[],"GET");
+    }
+
+    public function filtereventlogs(array $params){
+
+        return $this->callToCurl("/logs/event",$params);
+    }
+
+
 
 
 }
