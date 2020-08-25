@@ -41,8 +41,6 @@ class Vchain
     /*Method To Send HTTP Request*/
     private function callToCurl(string $queryString, array $params=[], string $httpMethod = "POST")
     {
-
-
         try {
             $url = self::generateUrl($this->ip, $this->port);
         } catch (Exception $e) {
@@ -110,7 +108,8 @@ class Vchain
     }
 
     public function filtereventlogs(array $params){
-        return $this->callToCurl("/logs/event",$params,"POST");
+
+        return $this->callToCurl("/logs/event",$params);
     }
 
 
