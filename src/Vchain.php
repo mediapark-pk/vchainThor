@@ -1,8 +1,9 @@
 <?php
-declare(strict_types=1);
+
 
 namespace VchainThor;
 
+use Comely\DataTypes\Buffer\Base16;
 use Comely\Http\Request;
 use Exception;
 
@@ -103,7 +104,6 @@ class Vchain
         return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code", [], "GET");
     }
 
-
     /*Get Account Address Code*/
     public function accountAddressStorage($queryString)
     {
@@ -111,7 +111,6 @@ class Vchain
 
         return $this->callToCurl($uri, [], "GET");
     }
-
 
     /*Generate URI*/
     /*@param */
@@ -128,16 +127,45 @@ class Vchain
 
     }
 
+    //Get Blocks
     public function blocks(string $param){
         return $this->callToCurl("/blocks/".$param,[],"GET");
     }
 
+    //Post Event Logs
     public function filtereventlogs(array $params){
 
         return $this->callToCurl("/logs/event",$params);
     }
 
+    //Post Logs Transfer
+    public function logsTransfer(array $params){
 
+        return $this->callToCurl("/logs/transfer",$params);
+    }
+
+    //Get Node Network Peer
+    public function peers(){
+        return $this->callToCurl("/node/network/peers",[],'GET');
+    }
+
+    //Get subscription Block
+    public function subscriptionsBlock(){
+        return $this->callToCurl("/subscriptions/block",[],'GET');
+    }
+
+    //Get Transection
+    public function transaction(string $params){
+        return $this->callToCurl("/transactions/".$params,[],'GET');
+    }
+
+    public function receipt(string $params){
+        return $this->callToCurl("/transactions/".$params."/receipt");
+    }
+
+    public function transactions(array $params){
+        return $this->callToCurl("/transactions",$params);
+    }
 
 
 }

@@ -47,6 +47,10 @@
             ],
             "description": "PHP data types",
             "homepage": "https://github.com/comely-io/data-types",
+            "support": {
+                "issues": "https://github.com/comely-io/data-types/issues",
+                "source": "https://github.com/comely-io/data-types/tree/master"
+            },
             "time": "2020-06-07T14:02:53+00:00"
         },
         {
@@ -92,6 +96,10 @@
             ],
             "description": "HTTP component for Comely Apps",
             "homepage": "https://github.com/comely-io/http",
+            "support": {
+                "issues": "https://github.com/comely-io/http/issues",
+                "source": "https://github.com/comely-io/http/tree/master"
+            },
             "time": "2020-06-30T07:54:58+00:00"
         },
         {
@@ -135,6 +143,10 @@
             ],
             "description": "Utilities for Comely Apps",
             "homepage": "https://github.com/comely-io/utils",
+            "support": {
+                "issues": "https://github.com/comely-io/utils/issues",
+                "source": "https://github.com/comely-io/utils/tree/master"
+            },
             "time": "2019-11-12T05:59:53+00:00"
         }
     ],
@@ -146,5 +158,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }
