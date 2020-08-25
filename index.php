@@ -63,11 +63,8 @@ $params = array(
 
 try {
     $result = $vchain->transactions(["0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea"]);
-}
-catch (Exception $e)
-{
+} catch (Exception $e) {
     print_r($e->getMessage());
-    die('here');
 }
 
 echo "<pre>";

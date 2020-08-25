@@ -10,17 +10,14 @@ class Vchain
 {
 
     /** @var string */
-    public string $ip;
+    private string $ip;
     /** @var int */
-    public int $port;
+    private int $port;
     /** @var string */
-    public string $username;
+    private string $username;
     /** @var string */
-    public string $password;
-    /** @var int id */
-    public int $id = 1;
-    /** @var string $jsonRpc */
-    public string $jsonRpc = "2.0";
+    private string $password;
+
 
     /**
      * Params constructor.
@@ -66,7 +63,7 @@ class Vchain
         //Set Basic Authentication
 //        $request->auth()->basic($this->username, $this->password);
 
-        /*Send The Request*/
+        //Send The Request
         $response = $request->send();
 
 
@@ -115,19 +112,6 @@ class Vchain
     }
 
 
-    /*Generate URI*/
-    /*@param */
-    private function generateURI(string $uri, array $queryString, array $keys): string
-    {
-        $result = str_replace(
-            $keys,
-            $queryString,
-            $uri
-        );
-        return $result;
-
-    }
-
     public function blocks(string $param)
     {
         return $this->callToCurl("/blocks/" . $param, [], "GET");
@@ -141,11 +125,28 @@ class Vchain
 
     //Access Transactions
 
-    public function transactions(array $queryString, array $params=[])
+    public function transactions(array $queryString, array $params = [])
     {
         $completeUri = self::generateURI("/transactions/{id}", $queryString, ["{id}"]);
 
-        return $this->callToCurl($completeUri, $params,"GET");
+        return $this->callToCurl($completeUri, $params, "GET");
     }
 
+
+    /**
+     * @param string $uri
+     * @param array $replaceBy
+     * @param array $find
+     * @return string
+     */
+    private function generateURI(string $uri, array $replaceBy, array $find): string
+    {
+        $result = str_replace(
+            $find,
+            $replaceBy,
+            $uri
+        );
+        return $result;
+
+    }
 }
