@@ -59,8 +59,7 @@ class Vchain
             ->set("Accept", "application/json");
 
         /*Set Request Body/Params*/
-        $params ? $request->payload($params) : null;
-
+        $params ? $request->payload()->use($params) : null;
 
         $request = $request->curl();
 
