@@ -38,7 +38,7 @@ class Vchain
     }
 
 
-    /*Method To Send HTTP Request*/
+    //Method To Send HTTP Request
     private function callToCurl(string $queryString, array $params = [], string $httpMethod = "POST")
     {
         try {
@@ -47,33 +47,34 @@ class Vchain
             return $e;
 
         }
-        /*Set Complete Url*/
+        //Set Complete Url
         $url .= $queryString;
 
         $request = new Request($httpMethod, $url);
 
-        /*Set Request Headers*/
+        //Set Request Headers
         $request
             ->headers()
             ->set("Content-Type", "application/json")
             ->set("Accept", "application/json");
 
-        /*Set Request Body/Params*/
+        //Set Request Body/Params
         $params ? $request->payload()->use($params) : null;
 
         $request = $request->curl();
 
-        /*Set Basic Authentication*/
+        //Set Basic Authentication
 //        $request->auth()->basic($this->username, $this->password);
 
         /*Send The Request*/
         $response = $request->send();
 
+
         return $response;
 
     }
 
-    /*Generate Url*/
+    //Generate Url
     public function generateUrl(string $ip, int $port): string
     {
         /*Port Checking */
@@ -90,54 +91,61 @@ class Vchain
 
     }
 
-    /*Get Network Peers*/
+    //Get Network Peers
     public function networkPeers(?array $params = [])
     {
         return $this->callToCurl("/node/network/peers", $params, "GET");
 
     }
 
-    /*Get Account Address Code*/
-    public function accountAddressCode()
+    //Get Account  Code
+    public function accountAddressCode(array $queryString)
     {
-        return $this->callToCurl("/accounts/0x5034aa590125b64023a0262112b98d72e3c8e40e/code", [], "GET");
+        $completeUri = self::generateURI("/accounts/{address}/code", $queryString, ["{address}"]);
+        return $this->callToCurl($completeUri, [], "GET");
     }
 
 
-    /*Get Account Address Code*/
-    public function accountAddressStorage($queryString)
+    //Get Account Storage Value
+    public function accountAddressStorage(array $queryString)
     {
-        $uri = self::generateURI("/accounts/q_s/code", $queryString);
+        $completeUri = self::generateURI("/accounts/{address}/storage/{key}", $queryString, ["{address}", "{key}"]);
 
-        return $this->callToCurl($uri, [], "GET");
+        return $this->callToCurl($completeUri, [], "GET");
     }
 
 
     /*Generate URI*/
     /*@param */
-    private function generateURI(string $uri, array $queryString): string
+    private function generateURI(string $uri, array $queryString, array $keys): string
+    {
+        $result = str_replace(
+            $keys,
+            $queryString,
+            $uri
+        );
+        return $result;
+
+    }
+
+    public function blocks(string $param)
+    {
+        return $this->callToCurl("/blocks/" . $param, [], "GET");
+    }
+
+    public function filtereventlogs(array $params)
     {
 
-        $fullURI="";
-        for ($i = 0; $i < count($queryString); $i++) {
-
-            $fullURI = str_replace("q_s", $queryString[$i], $uri);
-
-        }
-        return $fullURI;
-
+        return $this->callToCurl("/logs/event", $params);
     }
 
-    public function blocks(string $param){
-        return $this->callToCurl("/blocks/".$param,[],"GET");
+    //Access Transactions
+
+    public function transactions(array $queryString, array $params=[])
+    {
+        $completeUri = self::generateURI("/transactions/{id}", $queryString, ["{id}"]);
+
+        return $this->callToCurl($completeUri, $params,"GET");
     }
-
-    public function filtereventlogs(array $params){
-
-        return $this->callToCurl("/logs/event",$params);
-    }
-
-
-
 
 }

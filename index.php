@@ -28,11 +28,11 @@ $params = array(
 
 
 //$result = $diamondRpc->getNewAddress(array('doc test'));
-$result = $vchain->accounts($params);
+//$result = $vchain->accounts($params);
 //$result = $vchain->networkPeers();
-//$result = $vchain->accountAddressCode();
+//$result = $vchain->accountAddressCode(["0x5034aa590125b64023a0262112b98d72e3c8e40e"]);
 
-//$result = $vchain->accountAddressStorage([12]);
+//$result = $vchain->accountAddressStorage(["0x5034aa590125b64023a0262112b98d72e3c8e40e","0x0000000000000000000000000000000000000000000000000000000000000001"]);
 
 //$result = $vchain->blocks('best');
 //$param = array (
@@ -61,6 +61,14 @@ $result = $vchain->accounts($params);
 //
 //$result = $vchain->filtereventlogs($param);
 
+try {
+    $result = $vchain->transactions(["0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea"]);
+}
+catch (Exception $e)
+{
+    print_r($e->getMessage());
+    die('here');
+}
 
 echo "<pre>";
 print_r($result);
