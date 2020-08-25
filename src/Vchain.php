@@ -36,6 +36,16 @@ class Vchain
 
 
     //Method To Send HTTP Request
+    
+    /**
+     * @param string $queryString
+     * @param array $params
+     * @param string|string $httpMethod
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     private function callToCurl(string $queryString, array $params = [], string $httpMethod = "POST")
     {
         try {
