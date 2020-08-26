@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace VchainThor;
 
 use Comely\Http\Request;
+
 use Exception;
+use VchainThor\Exception\VchainThorException;
 
 class Vchain
 {
@@ -36,7 +38,7 @@ class Vchain
 
 
     //Method To Send HTTP Request
-    
+
     /**
      * @param string $queryString
      * @param array $params
@@ -76,6 +78,18 @@ class Vchain
         //Send The Request
         $response = $request->send();
 
+        // Check for Error
+        $error = $response->payload()->get("error");
+        if (is_array($error)) {
+
+            $errorCode = intval($error["code"] ?? 0);
+            $errorMessage = $error["message"] ?? 'An error occurred';
+            throw new VchainThorException($errorMessage, $errorCode);
+        }
+        // Result
+        if (($response->payload()->get("result") != 0) && (!$response->payload()->get("result"))) {
+            throw new VchainThorException('No response was received');
+        }
 
         return $response;
 
@@ -137,7 +151,7 @@ class Vchain
 
     public function transactions(array $queryString, array $params = [])
     {
-        $completeUri = self::generateURI("/transactions/{id}", $queryString, ["{id}"]);
+        $completeUri = self::generateURI("/transactions/{transactionId}", $queryString, ["{transactionId}"]);
 
         return $this->callToCurl($completeUri, $params, "GET");
     }
