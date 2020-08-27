@@ -7,6 +7,30 @@ $serverUrl = "http://185.244.248.29";
 
 $vchain = new Vchain($serverUrl, "8669");
 
+
+/*Post Transactions*/
+
+
+$clause = new  \VchainThor\Transaction\Clause("0x6d48628bb5bf20e5b4e591c948e0394e0d5bb078", 0, ['0x74f667c4']);
+
+print_r($clause);die();
+$reserved = new \VchainThor\Transaction\Reserved(1);
+$transaction = new \VchainThor\Transaction\Transaction(
+    "0x27",
+    "0x004984e1064ed410",
+    30 * 8640,
+    $clause,
+    0,
+    50000,
+    '0xa3b6232f',
+    null,
+    null,
+    $reserved
+);
+print_r($transaction);die();
+
+/*END Post Transactions*/
+
 $params = array(
     'clauses' =>
         array(
@@ -62,7 +86,8 @@ $params = array(
 //$result = $vchain->filtereventlogs($param);
 
 try {
-    $result = $vchain->transactions(["0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea"]);
+//    $result = $vchain->transactions(["0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea"]);
+    $result = $vchain->blocks("best");
 } catch (Exception $e) {
     print_r($e);
 }

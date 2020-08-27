@@ -1,6 +1,7 @@
 {
   "require": {
-    "comely-io/http": "1.0.47"
+    "comely-io/http": "1.0.47",
+    "web3p/rlp": "^0.3.2"
   },
   "autoload": {
     "psr-4": {

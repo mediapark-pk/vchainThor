@@ -42,8 +42,9 @@ class Vchain
     /**
      * @param string $queryString
      * @param array $params
-     * @param string|string $httpMethod
+     * @param string $httpMethod
      * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
      * @throws \Comely\Http\Exception\HttpRequestException
      * @throws \Comely\Http\Exception\HttpResponseException
      * @throws \Comely\Http\Exception\SSL_Exception
@@ -96,6 +97,13 @@ class Vchain
     }
 
     //Generate Url
+
+    /**
+     * @param string $ip
+     * @param int $port
+     * @return string
+     * @throws Exception
+     */
     public function generateUrl(string $ip, int $port): string
     {
         /*Port Checking */
@@ -106,6 +114,14 @@ class Vchain
         return $ip . ":" . $port;
     }
 
+    /**
+     * @param array|null $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function accounts(?array $params = [])
     {
         return $this->callToCurl("/accounts/*", $params);
@@ -113,6 +129,15 @@ class Vchain
     }
 
     //Get Network Peers
+
+    /**
+     * @param array|null $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function networkPeers(?array $params = [])
     {
         return $this->callToCurl("/node/network/peers", $params, "GET");
@@ -120,6 +145,15 @@ class Vchain
     }
 
     //Get Account  Code
+
+    /**
+     * @param array $queryString
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function accountAddressCode(array $queryString)
     {
         $completeUri = self::generateURI("/accounts/{address}/code", $queryString, ["{address}"]);
@@ -128,6 +162,15 @@ class Vchain
 
 
     //Get Account Storage Value
+
+    /**
+     * @param array $queryString
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function accountAddressStorage(array $queryString)
     {
         $completeUri = self::generateURI("/accounts/{address}/storage/{key}", $queryString, ["{address}", "{key}"]);
@@ -135,12 +178,27 @@ class Vchain
         return $this->callToCurl($completeUri, [], "GET");
     }
 
-
+    /**
+     * @param string $param
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function blocks(string $param)
     {
         return $this->callToCurl("/blocks/" . $param, [], "GET");
     }
 
+    /**
+     * @param array $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function filtereventlogs(array $params)
     {
 
@@ -149,6 +207,15 @@ class Vchain
 
     //Access Transactions
 
+    /**
+     * @param array $queryString
+     * @param array $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
     public function transactions(array $queryString, array $params = [])
     {
         $completeUri = self::generateURI("/transactions/{transactionId}", $queryString, ["{transactionId}"]);
@@ -156,6 +223,24 @@ class Vchain
         return $this->callToCurl($completeUri, $params, "GET");
     }
 
+
+    //Post Transactions
+
+    /**
+     * @param array $queryString
+     * @param array $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
+    public function postTransactions(array $params = [])
+    {
+        $completeUri = self::generateURI("/transactions", $params);
+
+        return $this->callToCurl($completeUri, $params, "GET");
+    }
 
     /**
      * @param string $uri
@@ -165,12 +250,11 @@ class Vchain
      */
     private function generateURI(string $uri, array $replaceBy, array $find): string
     {
-        $result = str_replace(
+        return str_replace(
             $find,
             $replaceBy,
             $uri
         );
-        return $result;
 
     }
 }
