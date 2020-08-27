@@ -15,8 +15,8 @@ class Transaction
     /** @var integer */
     private int $expiration;
 
-    /** @var Clauses */
-    private Clauses $clauses;
+    /** @var Clause */
+    private Clause $clauses;
 
     /** @var integer */
     private int $gasPriceCoef;
@@ -28,10 +28,10 @@ class Transaction
     private int $nonce;
 
     /** @var string */
-    private string $signature;
+//    private string $signature;
 
-    /** @var string */
-    private string $dependsOn;
+    /** @var string|null */
+    private ?string $dependsOn;
 
     /** @var string */
     private Reserved $reserved;
@@ -49,7 +49,7 @@ class Transaction
      * @param string $dependsOn
      * @param string|Reserved $reserved
      */
-    public function __construct(string $chainTag, int $blockRef, int $expiration, Clauses $clauses, int $gasPriceCoef, int $gas, int $nonce, string $signature, string $dependsOn, $reserved)
+    public function __construct(string $chainTag, int $blockRef, int $expiration, Clause $clauses, int $gasPriceCoef, int $gas, int $nonce, ?string $dependsOn=null, $reserved)
     {
         $this->chainTag = $chainTag;
         $this->blockRef = $blockRef;
@@ -58,7 +58,7 @@ class Transaction
         $this->gasPriceCoef = $gasPriceCoef;
         $this->gas = $gas;
         $this->nonce = $nonce;
-        $this->signature = $signature;
+//        $this->signature = $signature;
         $this->dependsOn = $dependsOn;
         $this->reserved = $reserved;
     }

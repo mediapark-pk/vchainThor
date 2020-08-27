@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a049a99184e1607ece9684bbae1d13da",
+    "content-hash": "790df0a27ca602cb8a309d323d5e43c7",
     "packages": [
         {
             "name": "comely-io/data-types",
@@ -136,6 +136,95 @@
             "description": "Utilities for Comely Apps",
             "homepage": "https://github.com/comely-io/utils",
             "time": "2019-11-12T05:59:53+00:00"
+        },
+        {
+            "name": "deemru/blake2b",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deemru/Blake2b.git",
+                "reference": "d7bd270d820fcad53b9a30a620075f4039cd6967"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/deemru/Blake2b/zipball/d7bd270d820fcad53b9a30a620075f4039cd6967",
+                "reference": "d7bd270d820fcad53b9a30a620075f4039cd6967",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "deemru\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitrii Pichulin",
+                    "email": "deem@deem.ru"
+                }
+            ],
+            "description": "BLAKE2 hash function on pure PHP",
+            "homepage": "https://github.com/deemru/Blake2b",
+            "keywords": [
+                "BLAKE2",
+                "BLAKE2b",
+                "blake2b256",
+                "hash",
+                "wavesplatform"
+            ],
+            "time": "2019-02-03T14:36:24+00:00"
+        },
+        {
+            "name": "furqansiddiqui/ecdsa-php",
+            "version": "0.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/furqansiddiqui/ecdsa-php.git",
+                "reference": "e187013e253d162fdf7a7e980c34465ca515830a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/furqansiddiqui/ecdsa-php/zipball/e187013e253d162fdf7a7e980c34465ca515830a",
+                "reference": "e187013e253d162fdf7a7e980c34465ca515830a",
+                "shasum": ""
+            },
+            "require": {
+                "comely-io/data-types": "^1.0.30",
+                "ext-bcmath": "*",
+                "ext-gmp": "*",
+                "ext-openssl": "*",
+                "php-64bit": "^7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FurqanSiddiqui\\ECDSA\\": [
+                        "src"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Furqan A. Siddiqui",
+                    "email": "hello@furqansiddiqui.com",
+                    "homepage": "https://www.furqansiddiqui.com",
+                    "role": "Author"
+                }
+            ],
+            "description": "ECDSA (Elliptic Curves) lib for PHP",
+            "homepage": "https://github.com/furqansiddiqui/ecdsa-php",
+            "time": "2020-01-08T17:38:47+00:00"
         },
         {
             "name": "web3p/rlp",

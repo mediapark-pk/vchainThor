@@ -1,7 +1,7 @@
 <?php
 
 use VchainThor\Vchain;
-
+use  FurqanSiddiqui\ECDSA\Curves\Secp256k1;
 require_once realpath('vendor/autoload.php');
 $serverUrl = "http://185.244.248.29";
 
@@ -9,11 +9,19 @@ $vchain = new Vchain($serverUrl, "8669");
 
 
 /*Post Transactions*/
-
+$secp = new Secp256k1();
+//Get Public Key From Private Key
+$publicKey= $secp->getPublicKey("e4ad1d43183137644053aac458a6ebc20029b27c616b0a2fea6d6b10f27f36af");
+//Derive Address From Public Key
+$uncompressedPublicKey=$publicKey->getCompressed()->value();
+//
+$secp->sign()
+//
+//Blake Enc
+$blake2b = new \deemru\Blake2b();
 
 $clause = new  \VchainThor\Transaction\Clause("0x6d48628bb5bf20e5b4e591c948e0394e0d5bb078", 0, ['0x74f667c4']);
 
-print_r($clause);die();
 $reserved = new \VchainThor\Transaction\Reserved(1);
 $transaction = new \VchainThor\Transaction\Transaction(
     "0x27",
@@ -24,10 +32,13 @@ $transaction = new \VchainThor\Transaction\Transaction(
     50000,
     '0xa3b6232f',
     null,
-    null,
     $reserved
 );
-print_r($transaction);die();
+//Hash Transaction with blake2b 256
+$hash=$blake2b->hash($transaction);
+
+
+print_r($hash);die();
 
 /*END Post Transactions*/
 
