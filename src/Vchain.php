@@ -237,9 +237,8 @@ class Vchain
      */
     public function postTransactions(array $params = [])
     {
-        $completeUri = self::generateURI("/transactions", $params);
 
-        return $this->callToCurl($completeUri, $params, "GET");
+        return $this->callToCurl("/transactions", $params);
     }
 
     /**

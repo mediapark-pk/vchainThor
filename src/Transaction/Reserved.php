@@ -20,5 +20,21 @@ class Reserved
         $this->unused = $unused;
     }
 
+    /**
+     * @return int
+     */
+    public function getFeatures(): int
+    {
+        return $this->features;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getUnused(): ?array
+    {
+        return $this->unused;
+    }
+
 
 }

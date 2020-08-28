@@ -1,21 +1,31 @@
 <?php
 
 use VchainThor\Vchain;
+use VchainThor\Transaction\Transaction;
+use Web3p\RLP\RLP;
 use  FurqanSiddiqui\ECDSA\Curves\Secp256k1;
+
 require_once realpath('vendor/autoload.php');
 $serverUrl = "http://185.244.248.29";
 
 $vchain = new Vchain($serverUrl, "8669");
 
+$txResponse=Transaction::generateTx();
+
+
+
+
+print_r($txResponse);die();
+/*Private Key*/
+$privateKey = "e4ad1d43183137644053aac458a6ebc20029b27c616b0a2fea6d6b10f27f36af";
 
 /*Post Transactions*/
 $secp = new Secp256k1();
 //Get Public Key From Private Key
-$publicKey= $secp->getPublicKey("e4ad1d43183137644053aac458a6ebc20029b27c616b0a2fea6d6b10f27f36af");
+//$publicKey= $secp->getPublicKey($privateKey);
 //Derive Address From Public Key
-$uncompressedPublicKey=$publicKey->getCompressed()->value();
-//
-$secp->sign()
+//$uncompressedPublicKey=$publicKey->getCompressed()->value();
+
 //
 //Blake Enc
 $blake2b = new \deemru\Blake2b();
@@ -34,11 +44,87 @@ $transaction = new \VchainThor\Transaction\Transaction(
     null,
     $reserved
 );
+
+
 //Hash Transaction with blake2b 256
-$hash=$blake2b->hash($transaction);
+
+$blakeHashedTransaction = $blake2b->hash($transaction);
+
+$blakeHashedTransaction = Transaction::String2Hex($blakeHashedTransaction);
 
 
-print_r($hash);die();
+//Neglect 1st 24 chars
+$blakestring = substr($blakeHashedTransaction, 24);
+
+//Append 0x
+$blakeHexString = "0x" . $blakestring;
+
+
+//Hash Transaction with Keccak
+$hashTransaction = \VchainThor\Keccak\Keccak::hash($transaction, 256);
+
+//Neglect 1st 24 chars
+$string = substr($hashTransaction, 24);
+
+//Append 0x
+$hexString = "0x" . $string;
+
+//print_r($hexString);die();
+//Convert To Base16 Private Key$blake2b
+$b16PrivateKey = new \Comely\DataTypes\Buffer\Base16();
+$b16PrivateKey->set($privateKey);
+
+
+$b16Hash = new \Comely\DataTypes\Buffer\Base16();
+//Convert To Base16 Private Key
+$b16Hash->set($blakeHexString);
+
+//
+$sign = $secp->sign($b16PrivateKey, $b16Hash);
+
+$transaction->setSignature($sign);
+
+//Rlp
+$rlp = new RLP;
+//Serialzing Transaction Props
+$empty=[];
+$chainTag = serialize($transaction->getChainTag());
+$blockRef = serialize($transaction->getBlockRef());
+$expiration = serialize($transaction->getExpiration());
+$to = serialize($transaction->getClauses()->getTo());
+$value = serialize($transaction->getClauses()->getValue());
+$data = serialize($transaction->getClauses()->getData());
+$gasPriceCoef = serialize($transaction->getGasPriceCoef());
+$gas = serialize($transaction->getGas());
+$nonce = serialize($transaction->getNonce());
+$sign =serialize($transaction->getSignature());
+$signautreR = serialize($transaction->getSignature()->r());
+$signautreS = serialize($transaction->getSignature()->s());
+$features = serialize($transaction->getReserved()->getFeatures());
+$unused = serialize($transaction->getReserved()->getUnused());
+
+$dataTx = array_push($empty,$chainTag,$blockRef,$expiration,$to,$value,$data,$gasPriceCoef,$gas,$nonce,$sign,$features,$unused);
+//Rlp Encoding
+
+$tx = $rlp->encode($empty);
+print_r($tx);die();
+$postTransaction=$vchain->postTransactions([$tx]);
+echo "<pre>";
+
+print_r($postTransaction);die();
+print_r($transaction);
+die();
+//Generating Raw Tx
+
+
+
+$encoded = $rlp->encode($transaction);
+print_r($encoded);
+die();
+
+//rawTx = '0x' + tx.encode().toString('hex');
+print_r($transaction);
+die();
 
 /*END Post Transactions*/
 
@@ -106,3 +192,4 @@ try {
 echo "<pre>";
 print_r($result);
 die();
+
