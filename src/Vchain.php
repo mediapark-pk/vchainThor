@@ -1,8 +1,9 @@
 <?php
-declare(strict_types=1);
+
 
 namespace VchainThor;
 
+use Comely\DataTypes\Buffer\Base16;
 use Comely\Http\Request;
 
 use Exception;
@@ -161,6 +162,7 @@ class Vchain
     }
 
 
+
     //Get Account Storage Value
 
     /**
@@ -171,12 +173,15 @@ class Vchain
      * @throws \Comely\Http\Exception\HttpResponseException
      * @throws \Comely\Http\Exception\SSL_Exception
      */
-    public function accountAddressStorage(array $queryString)
+
+    public function accountAddressStorage($queryString)
+
     {
         $completeUri = self::generateURI("/accounts/{address}/storage/{key}", $queryString, ["{address}", "{key}"]);
 
         return $this->callToCurl($completeUri, [], "GET");
     }
+
 
     /**
      * @param string $param
@@ -186,10 +191,7 @@ class Vchain
      * @throws \Comely\Http\Exception\HttpResponseException
      * @throws \Comely\Http\Exception\SSL_Exception
      */
-    public function blocks(string $param)
-    {
-        return $this->callToCurl("/blocks/" . $param, [], "GET");
-    }
+
 
     /**
      * @param array $params
@@ -220,8 +222,16 @@ class Vchain
     {
         $completeUri = self::generateURI("/transactions/{transactionId}", $queryString, ["{transactionId}"]);
 
+
         return $this->callToCurl($completeUri, $params, "GET");
     }
+
+    //Get Blocks
+    public function blocks(string $param)
+    {
+        return $this->callToCurl("/blocks/" . $param, [], "GET");
+    }
+
 
 
     //Post Transactions
@@ -240,6 +250,81 @@ class Vchain
 
         return $this->callToCurl("/transactions", $params);
     }
+
+    //Post Logs Transfer
+
+    /**
+     * @param array $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
+    public function logsTransfer(array $params)
+    {
+
+        return $this->callToCurl("/logs/transfer", $params);
+    }
+
+    //Get Node Network Peer
+
+    /**
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
+    public function peers()
+    {
+        return $this->callToCurl("/node/network/peers", [], 'GET');
+    }
+
+    //Get subscription Block
+
+    /**
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
+    public function subscriptionsBlock()
+    {
+        return $this->callToCurl("/subscriptions/block", [], 'GET');
+    }
+
+    //Get Transection
+
+    /**
+     * @param string $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
+    public function transaction(string $params)
+    {
+        return $this->callToCurl("/transactions/" . $params, [], 'GET');
+    }
+    // Receipt
+
+    /**
+     * @param string $params
+     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @throws VchainThorException
+     * @throws \Comely\Http\Exception\HttpRequestException
+     * @throws \Comely\Http\Exception\HttpResponseException
+     * @throws \Comely\Http\Exception\SSL_Exception
+     */
+    public function receipt(string $params)
+    {
+        return $this->callToCurl("/transactions/" . $params . "/receipt");
+    }
+
+    //Generate URI
 
     /**
      * @param string $uri
