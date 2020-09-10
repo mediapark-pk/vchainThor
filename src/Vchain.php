@@ -23,12 +23,12 @@ class Vchain
     private string $ip;
     /** @var int */
     private int $port;
-    /** @var string */
-    private string $username;
-    /** @var string */
-    private string $password;
-    /*** @var string */
-    private string $https;
+    /** @var string|null */
+    private ?string $username;
+    /** @var string|null */
+    private ?string $password;
+    /*** @var bool */
+    private bool $https;
 
     /**
      * Vchain constructor.
@@ -44,6 +44,7 @@ class Vchain
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
+        $this->https = $https;
     }
 
 
@@ -251,13 +252,12 @@ class Vchain
     //Post Transactions
 
     /**
-     * @param array $queryString
      * @param array $params
      * @return CurlResponse|Exception
-     * @throws VchainThorException
      * @throws HttpRequestException
      * @throws HttpResponseException
      * @throws SSL_Exception
+     * @throws VchainThorException
      */
     public function postTransactions(array $params = [])
     {
