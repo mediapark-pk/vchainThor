@@ -1,14 +1,21 @@
 <?php
-
+declare(strict_types=1);
 
 namespace VchainThor;
 
-use Comely\DataTypes\Buffer\Base16;
+use Comely\Http\Exception\HttpRequestException;
+use Comely\Http\Exception\HttpResponseException;
+use Comely\Http\Exception\SSL_Exception;
 use Comely\Http\Request;
 
+use Comely\Http\Response\CurlResponse;
 use Exception;
 use VchainThor\Exception\VchainThorException;
 
+/**
+ * Class Vchain
+ * @package VchainThor
+ */
 class Vchain
 {
 
@@ -20,16 +27,18 @@ class Vchain
     private string $username;
     /** @var string */
     private string $password;
-
+    /*** @var string */
+    private string $https;
 
     /**
-     * Params constructor.
+     * Vchain constructor.
      * @param string $ip
      * @param int $port
-     * @param string $username
-     * @param string $password
+     * @param string|null $username
+     * @param string|null $password
+     * @param bool $https
      */
-    public function __construct(string $ip, int $port, ?string $username = "", ?string $password = "")
+    public function __construct(string $ip, int $port, ?string $username = "", ?string $password = "", bool $https = false)
     {
         $this->ip = $ip;
         $this->port = $port;
@@ -40,34 +49,26 @@ class Vchain
 
     //Method To Send HTTP Request
 
+
     /**
-     * @param string $queryString
+     * @param string $endpoint
      * @param array $params
      * @param string $httpMethod
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
-    private function callToCurl(string $queryString, array $params = [], string $httpMethod = "POST")
+    private function callToCurl(string $endpoint, array $params = [], string $httpMethod = "POST")
     {
-        try {
-            $url = self::generateUrl($this->ip, $this->port);
-        } catch (Exception $e) {
-            return $e;
 
-        }
-        //Set Complete Url
-        $url .= $queryString;
+        $url = self::generateUrl($endpoint);
 
         $request = new Request($httpMethod, $url);
 
         //Set Request Headers
-        $request
-            ->headers()
-            ->set("Content-Type", "application/json")
-            ->set("Accept", "application/json");
+        $request->headers()->set("Content-Type", "application/json")->set("Accept", "application/json");
 
         //Set Request Body/Params
         $params ? $request->payload()->use($params) : null;
@@ -75,7 +76,10 @@ class Vchain
         $request = $request->curl();
 
         //Set Basic Authentication
-//        $request->auth()->basic($this->username, $this->password);
+        if ($this->username && $this->password) {
+
+            $request->auth()->basic($this->username, $this->password);
+        }
 
         //Send The Request
         $response = $request->send();
@@ -100,28 +104,29 @@ class Vchain
     //Generate Url
 
     /**
-     * @param string $ip
-     * @param int $port
+     * @param string|null $endpoint
      * @return string
-     * @throws Exception
      */
-    public function generateUrl(string $ip, int $port): string
+    public function generateUrl(?string $endpoint = null): string
     {
-        /*Port Checking */
-        if (!is_numeric($port)) {
-            throw new Exception("A port can only be a number", 1);
-
+        $url = sprintf('%s://%s', $this->https ? "https" : "http", $this->ip);
+        if ($this->port) {
+            $url .= ":" . $this->port;
         }
-        return $ip . ":" . $port;
+        if ($endpoint) {
+            $url .= "/api/" . ltrim($endpoint, "/");
+        }
+        return $url;
+
     }
 
     /**
      * @param array|null $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function accounts(?array $params = [])
     {
@@ -133,11 +138,11 @@ class Vchain
 
     /**
      * @param array|null $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function networkPeers(?array $params = [])
     {
@@ -149,11 +154,11 @@ class Vchain
 
     /**
      * @param array $queryString
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function accountAddressCode(array $queryString)
     {
@@ -167,11 +172,11 @@ class Vchain
 
     /**
      * @param array $queryString
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
 
     public function accountAddressStorage($queryString)
@@ -185,21 +190,21 @@ class Vchain
 
     /**
      * @param string $param
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
 
 
     /**
      * @param array $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function filtereventlogs(array $params)
     {
@@ -212,11 +217,11 @@ class Vchain
     /**
      * @param array $queryString
      * @param array $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function transactions(array $queryString, array $params = [])
     {
@@ -227,6 +232,15 @@ class Vchain
     }
 
     //Get Blocks
+
+    /**
+     * @param string $param
+     * @return CurlResponse
+     * @throws VchainThorException
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
+     */
     public function blocks(string $param)
     {
         return $this->callToCurl("/blocks/" . $param, [], "GET");
@@ -239,11 +253,11 @@ class Vchain
     /**
      * @param array $queryString
      * @param array $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function postTransactions(array $params = [])
     {
@@ -255,11 +269,11 @@ class Vchain
 
     /**
      * @param array $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function logsTransfer(array $params)
     {
@@ -270,11 +284,11 @@ class Vchain
     //Get Node Network Peer
 
     /**
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function peers()
     {
@@ -284,11 +298,11 @@ class Vchain
     //Get subscription Block
 
     /**
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function subscriptionsBlock()
     {
@@ -299,11 +313,11 @@ class Vchain
 
     /**
      * @param string $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function transaction(string $params)
     {
@@ -313,11 +327,11 @@ class Vchain
 
     /**
      * @param string $params
-     * @return \Comely\Http\Response\CurlResponse|Exception
+     * @return CurlResponse|Exception
      * @throws VchainThorException
-     * @throws \Comely\Http\Exception\HttpRequestException
-     * @throws \Comely\Http\Exception\HttpResponseException
-     * @throws \Comely\Http\Exception\SSL_Exception
+     * @throws HttpRequestException
+     * @throws HttpResponseException
+     * @throws SSL_Exception
      */
     public function receipt(string $params)
     {
