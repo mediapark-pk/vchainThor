@@ -12,6 +12,10 @@ use Comely\Http\Response\CurlResponse;
 use Exception;
 use VchainThor\Accounts\Account;
 use VchainThor\Blocks\Blocks;
+use VchainThor\Debug\Debug;
+use VchainThor\Logs\Logs;
+use VchainThor\Node\Node;
+use VchainThor\Subscription\Subscription;
 use VchainThor\Exception\VchainThorException;
 
 /**
@@ -35,6 +39,12 @@ class Vchain
     public Account $account;
     /*** @var Blocks */
     public Blocks $block;
+    /*** @var Logs */
+    public Logs $logs;
+    /*** @var Subscription */
+    public Subscription $subscription;
+    /*** @var Debug|Debug */
+    public Debug $debug;
 
     /**
      * Vchain constructor.
@@ -53,6 +63,10 @@ class Vchain
         $this->https = $https;
         $this->account = new Account($this);
         $this->block = new Blocks($this);
+        $this->logs = new Logs($this);
+        $this->node = new Node($this);
+        $this->subscription = new Subscription($this);
+        $this->debug = new Debug($this);
     }
     //Method To Send HTTP Request
 
@@ -77,7 +91,9 @@ class Vchain
         $request->headers()->set("Content-Type", "application/json")->set("Accept", "application/json");
 
         //Set Request Body/Params
-        $params ? $request->payload()->use($params) : null;
+        if ($params) {
+            $request->payload()->use($params);
+        }
 
         $request = $request->curl();
 
@@ -93,10 +109,10 @@ class Vchain
 
         if ($errCode !== 200) {
             $errMsg = $res->body()->value();
+
             if ($errMsg) {
 
-
-                throw new VchainThorException($errMsg ? $errMsg : sprintf('HTTP Response Code %d', $errCode), $errCode);
+                throw new VchainThorException(sprintf('HTTP Response Code %d', $errCode), $errCode);
             }
         }
         return $res;
