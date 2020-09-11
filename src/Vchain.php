@@ -7,7 +7,6 @@ use Comely\Http\Exception\HttpRequestException;
 use Comely\Http\Exception\HttpResponseException;
 use Comely\Http\Exception\SSL_Exception;
 use Comely\Http\Request;
-
 use Comely\Http\Response\CurlResponse;
 use Exception;
 use VchainThor\Accounts\Account;
@@ -17,6 +16,7 @@ use VchainThor\Logs\Logs;
 use VchainThor\Node\Node;
 use VchainThor\Subscription\Subscription;
 use VchainThor\Exception\VchainThorException;
+use VchainThor\Transaction\TransactionApi;
 
 /**
  * Class Vchain
@@ -67,6 +67,7 @@ class Vchain
         $this->node = new Node($this);
         $this->subscription = new Subscription($this);
         $this->debug = new Debug($this);
+        $this->transactionApi = new TransactionApi($this);
     }
     //Method To Send HTTP Request
 
@@ -109,7 +110,7 @@ class Vchain
 
         if ($errCode !== 200) {
             $errMsg = $res->body()->value();
-
+            echo $errMsg;
             if ($errMsg) {
 
                 throw new VchainThorException(sprintf('HTTP Response Code %d', $errCode), $errCode);
