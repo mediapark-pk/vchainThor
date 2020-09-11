@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace VchainThor\Blocks;
 
+use VchainThor\Exception\VchainThorBlockException;
 use VchainThor\Exception\VchainThorException;
 use VchainThor\Vchain;
 
@@ -34,8 +35,29 @@ class Blocks
     {
         $endpoint = sprintf("/blocks/%s?expanded=%s", $revision, $expanded);
         $response = $this->vchain->callToCurl($endpoint);
-        print_r($response);
-        die();
-        return new BlockResponse($response);
+        $data = $response->payload();
+        if ($data->get('id')) {
+            return new BlockResponse(
+                $data->get('number'),
+                $data->get('id'),
+                $data->get('size'),
+                $data->get('parentid'),
+                $data->get('timestamp'),
+                $data->get('gaslimit'),
+                $data->get('beneficiary'),
+                $data->get('gasused'),
+                $data->get('totalscore'),
+                $data->get('txsroot'),
+                $data->get('txsfeatures'),
+                $data->get('stateroot'),
+                $data->get('receiptsroot'),
+                $data->get('signer'),
+                $data->get('istrunk'),
+                $data->get('transactions')
+            );
+
+        } else {
+            throw new VchainThorBlockException("Block Data  Not Found!");
+        }
     }
 }
