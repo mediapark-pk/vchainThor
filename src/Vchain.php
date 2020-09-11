@@ -10,6 +10,8 @@ use Comely\Http\Request;
 
 use Comely\Http\Response\CurlResponse;
 use Exception;
+use VchainThor\Accounts\Account;
+use VchainThor\Blocks\Blocks;
 use VchainThor\Exception\VchainThorException;
 
 /**
@@ -29,6 +31,10 @@ class Vchain
     private ?string $password;
     /*** @var bool */
     private bool $https;
+    /*** @var Account */
+    public Account $account;
+    /*** @var Blocks */
+    public Blocks $block;
 
     /**
      * Vchain constructor.
@@ -45,11 +51,10 @@ class Vchain
         $this->username = $username;
         $this->password = $password;
         $this->https = $https;
+        $this->account = new Account($this);
+        $this->block = new Blocks($this);
     }
-
-
     //Method To Send HTTP Request
-
 
     /**
      * @param string $endpoint
@@ -61,7 +66,7 @@ class Vchain
      * @throws HttpResponseException
      * @throws SSL_Exception
      */
-    private function callToCurl(string $endpoint, array $params = [], string $httpMethod = "POST")
+    public function callToCurl(string $endpoint, array $params = [], string $httpMethod = "GET")
     {
 
         $url = self::generateUrl($endpoint);
@@ -82,24 +87,19 @@ class Vchain
             $request->auth()->basic($this->username, $this->password);
         }
 
-        //Send The Request
-        $response = $request->send();
+        // Send The Request
+        $res = $request->send();
+        $errCode = $res->code();
 
-        // Check for Error
-        $error = $response->payload()->get("error");
-        if (is_array($error)) {
+        if ($errCode !== 200) {
+            $errMsg = $res->body()->value();
+            if ($errMsg) {
 
-            $errorCode = intval($error["code"] ?? 0);
-            $errorMessage = $error["message"] ?? 'An error occurred';
-            throw new VchainThorException($errorMessage, $errorCode);
+
+                throw new VchainThorException($errMsg ? $errMsg : sprintf('HTTP Response Code %d', $errCode), $errCode);
+            }
         }
-        // Result
-        if (($response->payload()->get("result") != 0) && (!$response->payload()->get("result"))) {
-            throw new VchainThorException('No response was received');
-        }
-
-        return $response;
-
+        return $res;
     }
 
     //Generate Url
@@ -115,7 +115,7 @@ class Vchain
             $url .= ":" . $this->port;
         }
         if ($endpoint) {
-            $url .= "/api/" . ltrim($endpoint, "/");
+            $url .= "/" . ltrim($endpoint, "/");
         }
         return $url;
 
@@ -150,7 +150,6 @@ class Vchain
         return $this->callToCurl("/node/network/peers", $params, "GET");
 
     }
-
     //Get Account  Code
 
     /**
@@ -166,8 +165,6 @@ class Vchain
         $completeUri = self::generateURI("/accounts/{address}/code", $queryString, ["{address}"]);
         return $this->callToCurl($completeUri, [], "GET");
     }
-
-
 
     //Get Account Storage Value
 
@@ -187,16 +184,6 @@ class Vchain
 
         return $this->callToCurl($completeUri, [], "GET");
     }
-
-
-    /**
-     * @param string $param
-     * @return CurlResponse|Exception
-     * @throws VchainThorException
-     * @throws HttpRequestException
-     * @throws HttpResponseException
-     * @throws SSL_Exception
-     */
 
 
     /**
