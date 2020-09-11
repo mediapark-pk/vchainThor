@@ -9,6 +9,6 @@ namespace VchainThor\Exception;
  * Class ConnectionException
  * @package VchainThor\Exception
  */
-class ConnectionException extends VchainThorRPCException
+class ConnectionException extends VchainThorException
 {
 }

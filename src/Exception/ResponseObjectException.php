@@ -9,6 +9,6 @@ namespace VchainThor\Exception;
  * Class ResponseObjectException
  * @package VchainThor\Exception
  */
-class ResponseObjectException extends VchainThorRPCException
+class ResponseObjectException extends VchainThorException
 {
 }

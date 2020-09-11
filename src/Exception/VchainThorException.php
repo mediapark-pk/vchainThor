@@ -11,7 +11,7 @@ use VchainThor\Exception\VchainThorRPCException;
  * Class VchainThorException
  * @package VchainThor\Exception
  */
-class VchainThorException extends VchainThorRPCException
+class VchainThorException extends \Exception
 {
     /**
      * @param string $method

@@ -8,6 +8,6 @@ namespace VchainThor\Exception;
  * Class VchainThorRPCException
  * @package VchainThor\Exception
  */
-class VchainThorRPCException extends \Exception
+class VchainThorRPCException extends VchainThorException
 {
 }
