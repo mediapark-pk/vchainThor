@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace VchainThor\Transaction;
 
+use Comely\DataTypes\Buffer\Base16;
+use Comely\DataTypes\Buffer\Binary;
 use deemru\Blake2b;
 use Web3p\RLP\RLP;
 use  FurqanSiddiqui\ECDSA\Curves\Secp256k1;
 use FurqanSiddiqui\ECDSA\Signature\Signature;
+use Web3p\RLP\Types\Str;
+use VchainThor\Transaction\Reserved;
+use VchainThor\Transaction\Clause;
 
 class Transaction
 {
@@ -178,8 +183,32 @@ class Transaction
         return $hex;
     }
 
+    public function serialzeTransaction($transaction)
+    {
+
+        $expiration = $transaction->expiration;
+
+        $data = new Base16();
+        $data->append($transaction->chainTag);
+        $data->append($transaction->blockRef);
+//        $data->append(strval($expiration));
+//        $data->append(strval($transaction->clauses->to));
+//        $data->append(strval($transaction->clauses->value));
+//        $data->append(($transaction->clauses->data[0]));
+//        $data->append(strval($transaction->gasPriceCoef));
+//        $data->append(strval($transaction->gas));
+//        $data->append($transaction->nonce);
+//        $data->append(strval($transaction->dependsOn));
+//        $data->append(strval($transaction->reserved->features));
+//        $data->append($transaction->reserved->unused);
+
+        return $data;
+    }
+
+
     public static function generateTx()
     {
+
 
         /*Private Key*/
         $privateKey = "e4ad1d43183137644053aac458a6ebc20029b27c616b0a2fea6d6b10f27f36af";
@@ -195,9 +224,9 @@ class Transaction
         //Blake Enc
         $blake2b = new \deemru\Blake2b();
 
-        $clause = new  \VchainThor\Transaction\Clause("0x6d48628bb5bf20e5b4e591c948e0394e0d5bb078", 0, ['0x74f667c4']);
+        $clause = new  Clause("0x6d48628bb5bf20e5b4e591c948e0394e0d5bb078", 0, ['0x74f667c4']);
 
-        $reserved = new \VchainThor\Transaction\Reserved(1);
+        $reserved = new Reserved(1);
         $transaction = new self(
             "0x27",
             "0x004984e1064ed410",
@@ -205,11 +234,44 @@ class Transaction
             $clause,
             0,
             50000,
-            '0xa3b6232f',
+            '0',
             null,
             $reserved
         );
+        $serialzedTransaction=self::serialzeTransaction($transaction);
 
+        print_r($serialzedTransaction);die();
+
+
+        //Rlp
+        $rlp = new RLP;
+        $encoded = $rlp->encode([$serialzedTransaction]);
+
+        $encoded = "0x" . $encoded;
+
+        print_r($encoded);
+        die();
+
+
+// only accept 0x prefixed hex string
+
+        $decoded = $rlp->decode($encoded);
+
+//        $hex2binData= hex2bin($decoded[0]);
+//        print_r($hex2binData);
+        echo "<br>";
+        echo "unserialied transaction";
+        echo "<br>";
+
+        print_r(Str::decodeHex($decoded[0]));
+
+//        print_r(unserialize($hex2binData));
+        die();
+
+
+//        echo "<pre>";
+//        print_r($serialzedTransaction);
+//        die();
 
         //Hash Transaction with blake2b 256
 
@@ -253,7 +315,6 @@ class Transaction
 
         //Rlp
         $rlp = new RLP;
-
 
         //Serialzing Transaction Props
         $empty = [];
@@ -313,8 +374,6 @@ class Transaction
         $unusedRlp = $unusedRlp->encode([$unused]);
 
 
-
-
         $dataTx = array_push(
             $empty,
             $chainTagRlp,
@@ -346,5 +405,6 @@ class Transaction
         print_r($tx);
         die();
     }
+
 
 }
