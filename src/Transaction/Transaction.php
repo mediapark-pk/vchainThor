@@ -191,15 +191,15 @@ class Transaction
         $data = new Base16();
         $data->append($transaction->chainTag);
         $data->append($transaction->blockRef);
-//        $data->append(strval($expiration));
-//        $data->append(strval($transaction->clauses->to));
-//        $data->append(strval($transaction->clauses->value));
-//        $data->append(($transaction->clauses->data[0]));
-//        $data->append(strval($transaction->gasPriceCoef));
-//        $data->append(strval($transaction->gas));
-//        $data->append($transaction->nonce);
+        $data->append(strval($expiration));
+        $data->append(strval($transaction->clauses->to));
+        $data->append(strval($transaction->clauses->value));
+        $data->append(($transaction->clauses->data[0]));
+        $data->append(strval($transaction->gasPriceCoef));
+        $data->append(strval($transaction->gas));
+        $data->append($transaction->nonce);
 //        $data->append(strval($transaction->dependsOn));
-//        $data->append(strval($transaction->reserved->features));
+        $data->append(strval($transaction->reserved->features));
 //        $data->append($transaction->reserved->unused);
 
         return $data;

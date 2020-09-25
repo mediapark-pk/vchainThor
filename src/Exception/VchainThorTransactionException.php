@@ -4,7 +4,7 @@
 namespace VchainThor\Exception;
 
 
-class VchainThorTransactionException
+class VchainThorTransactionException extends VchainThorException
 {
 
 }
