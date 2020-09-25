@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "790df0a27ca602cb8a309d323d5e43c7",
+    "content-hash": "4cd6daf4b4afd0687ceecd36149d49b8",
     "packages": [
         {
             "name": "comely-io/data-types",
@@ -47,10 +47,6 @@
             ],
             "description": "PHP data types",
             "homepage": "https://github.com/comely-io/data-types",
-            "support": {
-                "issues": "https://github.com/comely-io/data-types/issues",
-                "source": "https://github.com/comely-io/data-types/tree/master"
-            },
             "time": "2020-06-07T14:02:53+00:00"
         },
         {
@@ -96,10 +92,6 @@
             ],
             "description": "HTTP component for Comely Apps",
             "homepage": "https://github.com/comely-io/http",
-            "support": {
-                "issues": "https://github.com/comely-io/http/issues",
-                "source": "https://github.com/comely-io/http/tree/master"
-            },
             "time": "2020-06-30T07:54:58+00:00"
         },
         {
@@ -143,10 +135,6 @@
             ],
             "description": "Utilities for Comely Apps",
             "homepage": "https://github.com/comely-io/utils",
-            "support": {
-                "issues": "https://github.com/comely-io/utils/issues",
-                "source": "https://github.com/comely-io/utils/tree/master"
-            },
             "time": "2019-11-12T05:59:53+00:00"
         },
         {
@@ -195,24 +183,24 @@
         },
         {
             "name": "furqansiddiqui/ecdsa-php",
-            "version": "0.1.8",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/furqansiddiqui/ecdsa-php.git",
-                "reference": "e187013e253d162fdf7a7e980c34465ca515830a"
+                "reference": "61b9b134c4dc273a4d52d76922df98a26f37d4f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/furqansiddiqui/ecdsa-php/zipball/e187013e253d162fdf7a7e980c34465ca515830a",
-                "reference": "e187013e253d162fdf7a7e980c34465ca515830a",
+                "url": "https://api.github.com/repos/furqansiddiqui/ecdsa-php/zipball/61b9b134c4dc273a4d52d76922df98a26f37d4f6",
+                "reference": "61b9b134c4dc273a4d52d76922df98a26f37d4f6",
                 "shasum": ""
             },
             "require": {
-                "comely-io/data-types": "^1.0.30",
+                "comely-io/data-types": "^1.0.34",
                 "ext-bcmath": "*",
                 "ext-gmp": "*",
                 "ext-openssl": "*",
-                "php-64bit": "^7.2"
+                "php-64bit": "^7.4"
             },
             "type": "library",
             "autoload": {
@@ -236,7 +224,7 @@
             ],
             "description": "ECDSA (Elliptic Curves) lib for PHP",
             "homepage": "https://github.com/furqansiddiqui/ecdsa-php",
-            "time": "2020-01-08T17:38:47+00:00"
+            "time": "2020-09-15T06:13:37+00:00"
         },
         {
             "name": "web3p/rlp",
@@ -283,5 +271,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "1.1.0"
 }

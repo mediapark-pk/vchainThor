@@ -15,12 +15,11 @@ declare(strict_types=1);
 namespace VchainThor\Transactions;
 
 use Comely\DataTypes\Buffer\Base16;
+use FurqanSiddiqui\ECDSA\Curves\Secp256k1;
 use FurqanSiddiqui\ECDSA\Signature\Signature;
-use VchainThor\Accounts\Account;
 use VchainThor\Exception\IncompleteTxException;
-
 use VchainThor\RLP;
-use VchainThor\Transaction\Clause;
+use VchainThor\Clause\Clause;
 use VchainThor\Transaction\Reserved;
 
 
@@ -60,12 +59,8 @@ class TxBuilder
     /** @var Reserved */
     private Reserved $reserved;
 
-
-    private array $signature = [
-        "v" => 0,
-        "r" => "",
-        "s" => "",
-    ];
+    /** @var string */
+    private string $signature;
 
     /**
      * @param Ethereum $eth
@@ -114,7 +109,6 @@ class TxBuilder
      */
     public function __construct()
     {
-        $this->signature["v"] = 1;
     }
 
     /**
@@ -208,10 +202,10 @@ class TxBuilder
     }
 
     /**
-     * @param array $signature
-     * @return TxBuilder
+     * @param string $signature
+     * @return $this
      */
-    public function setSignature(array $signature): TxBuilder
+    public function setSignature(string $signature): TxBuilder
     {
         $this->signature = $signature;
         return $this;
@@ -232,12 +226,34 @@ class TxBuilder
         return $this;
     }
 
+    public function signTx(Base16 $privateKey, Base16 $msgHash): Signature
+    {
+        $secp = new Secp256k1();
+        $signature = $secp->sign($privateKey, $msgHash);
+
+        return $signature;
+
+
+        echo "<pre>";
+        print_r($signature);
+        echo "verify now <br>";
+
+        //Verify Signature
+        $publicKey = $secp->getPublicKey($privateKey);
+
+        $verification = $secp->verify($publicKey, $signature, $msgHash);
+
+        die($verification);
+
+    }
+
     /**
      * @return RLPEncodedTx
      * @throws IncompleteTxException
      */
     public function serialize(): RLPEncodedTx
     {
+
         $rlp = new RLP();
         $txObj = new RLP\RLPObject();
 
@@ -260,30 +276,45 @@ class TxBuilder
         $txObj->encodeInteger($this->expiration);
 
         //Clauses
-        if (!isset($this->clauses) || $this->clauses < 0) {
-            throw new IncompleteTxException('Clause value is not set or is invalid');
-        }
+//        if (!isset($this->clauses)) {
+//            throw new IncompleteTxException('Clause value is not set or is invalid');
+//        }
+//        $txObj->encodeHexString($this->clauses->body->to);
+//        $txObj->encodeInteger($this->clauses->body->value);
+//        $txObj->encodeObject($txObj);
+//        $txObj->encodeHexString($this->clauses->getTo());
+//        $txObj->encodeInteger($this->clauses->getValue());
 //        $txObj->encodeHexString($this->clauses);
 
-//        // Gas
-//        if (!isset($this->gas) || $this->gas < 1) {
-//            throw new IncompleteTxException('Gas  are not defined');
-//        }
-//
-//        $txObj->encodeInteger($this->gas);
-//
-//        //Gas Price Coefficient
-//        if (!isset($this->gasPriceCoef) || $this->gasPriceCoef < 0) {
-//            throw new IncompleteTxException('Gas Price Coefficient value is not set or is invalid');
-//        }
-//        $txObj->encodeInteger($this->gasPriceCoef);
-//
-//        // Nonce
-//        if (!isset($this->nonce) || $this->nonce < 0) {
-//            throw new IncompleteTxException('Nonce value is not set or is invalid');
-//        }
-//
-//        $txObj->encodeInteger($this->nonce);
+
+        //Gas Price Coefficient
+        if (!isset($this->gasPriceCoef) || $this->gasPriceCoef < 0) {
+            throw new IncompleteTxException('Gas Price Coefficient value is not set or is invalid');
+        }
+        $txObj->encodeInteger($this->gasPriceCoef);
+
+
+        // Gas
+        if (!isset($this->gas) || $this->gas < 1) {
+            throw new IncompleteTxException('Gas  are not defined');
+        }
+
+        $txObj->encodeInteger($this->gas);
+
+        //Depends On
+
+        if (!isset($this->dependsOn)) {
+            throw new IncompleteTxException('Depends On value is not set or is invalid');
+        }
+        $txObj->encodeHexString($this->dependsOn);
+
+
+        // Nonce
+        if (!isset($this->nonce) || $this->nonce < 0) {
+            throw new IncompleteTxException('Nonce value is not set or is invalid');
+        }
+
+        $txObj->encodeInteger($this->nonce);
 
 
 //
@@ -295,12 +326,21 @@ class TxBuilder
 //        $txObj->encodeHexString($this->to->getAddress());
 //
 //
-//        // Signature
-//        $txObj->encodeInteger($this->signature["v"]);
-//        $txObj->encodeHexString($this->signature["r"]);
-//        $txObj->encodeHexString($this->signature["s"]);
 
-        print_r($rlp);exit();
+        //Features
+        if (!isset($this->reserved->features) || $this->reserved->features < 0) {
+            throw new IncompleteTxException('Reserved Feature value is not set or is invalid');
+        }
+        $txObj->encodeInteger($this->reserved->features);
+        //Unused
+//        $txObj->encodeInteger($this->reserved->features);
+
+        // Signature
+        if (!isset($this->signature)) {
+            throw new IncompleteTxException('Reserved Feature value is not set or is invalid');
+        }
+        $txObj->encodeHexString($this->signature);
+
         return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
     }
 }

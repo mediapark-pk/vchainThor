@@ -29,20 +29,45 @@ $vchain = new Vchain("185.244.248.29", "8669");
 
 //print_r($data);
 //die("jere");
+
 $txResponse = new VchainThor\Transactions\TxBuilder();
+//Convert Private Key To Base16
+$b16PrivKey = new \Comely\DataTypes\Buffer\Base16();
+$b16PrivKey->set("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19");
+
+$message = "Sarmad Sohail";
+
+//Convert To Keccak Hash
+$keccakMessage = \VchainThor\Keccak\Keccak::hash($message, 256);
+
+//Convert Keccak Message To Base16
+$b16KeccakMessage = new \Comely\DataTypes\Buffer\Base16();
+$b16KeccakMessage->set($keccakMessage);
+echo "<pre>";
+$sign = $txResponse->signTx($b16PrivKey, $b16KeccakMessage);
+
+
 $txResponse->setChainTag("0x4a");
 $txResponse->setNonce(5475834264257970848);
 $txResponse->setBlockRef("7023094-f244f89b");
 $txResponse->setGas(21000);
 $txResponse->setGasPriceCoef(128);
 $txResponse->setExpiration(32);
-$clause = new \VchainThor\Transaction\Clause("0x03596a5ac91e97fc7ee6e4d7088683fe4b179dfd", 25);
+$txResponse->setDependsOn("0x5c44dd09ae71b19a5be9975b322a54779aaf35dfbef28c9498d55c4cc66d3309");
+//$signature = ["v" => 0, "r" => "0x" . $sign->r()->value(), "s" => "0x" . $sign->s()->value()];
+$txResponse->setSignature("0x" . $sign->getDER()->value());
+$clauseBody = new \VchainThor\Clause\clauseBody("0x03596a5ac91e97fc7ee6e4d7088683fe4b179dfd", 25);
+
+$clause = new \VchainThor\Clause\Clause($clauseBody);
+
 $txResponse->setClauses($clause);
+$reserved = new \VchainThor\Transaction\Reserved(32, []);
+$txResponse->setReserved($reserved);
 
 print_r("<pre>");
 print_r($txResponse->serialize());
 
-\VchainThor\Transactions\TxBuilder::Decode($txResponse->serialize());
+//\VchainThor\Transactions\TxBuilder::Decode($txResponse->serialize());
 die();
 
 $txResponse = Transaction::generateTx();

@@ -1,14 +1,12 @@
 <?php
-declare(strict_types=1);
 
-namespace VchainThor\Transaction;
+
+namespace VchainThor\Clause;
 
 
 use VchainThor\Exception\IncompleteTxException;
-use VchainThor\RLP;
-use VchainThor\Transactions\RLPEncodedTx;
 
-class Clause
+class clauseBody
 {
     public string $to;
     public int $value;
@@ -51,26 +49,5 @@ class Clause
         return $this->data;
     }
 
-    /**
-     * @return RLPEncodedTx
-     * @throws IncompleteTxException
-     */
-    public function serialize(): RLPEncodedTx
-    {
-        $rlp = new RLP();
-        $txObj = new RLP\RLPObject();
-
-        //To
-        if (!isset($this->to) || $this->to < 0) {
-            throw new IncompleteTxException('To  value is not set or is invalid');
-        }
-        $txObj->encodeHexString($this->to);
-
-        //Value
-        if (!isset($this->value) || $this->value < 0) {
-            throw new IncompleteTxException('Value is not set or is invalid');
-        }
-        $txObj->encodeInteger($this->value);
-    }
 
 }
