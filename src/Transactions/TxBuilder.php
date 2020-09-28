@@ -15,12 +15,14 @@ declare(strict_types=1);
 namespace VchainThor\Transactions;
 
 use Comely\DataTypes\Buffer\Base16;
+use deemru\Blake2b;
 use FurqanSiddiqui\ECDSA\Curves\Secp256k1;
 use FurqanSiddiqui\ECDSA\Signature\Signature;
 use VchainThor\Exception\IncompleteTxException;
 use VchainThor\RLP;
 use VchainThor\Clause\Clause;
 use VchainThor\Transaction\Reserved;
+use VchainThor\Transactions\TxBuilder\StringEncode;
 
 
 /**
@@ -37,8 +39,8 @@ class TxBuilder
     /** @var integer */
     private int $expiration;
 
-    /** @var Clause */
-    private Clause $clauses;
+    /** @var array  */
+    private array $clauses;
 
     /** @var integer */
     private int $gasPriceCoef;
@@ -142,10 +144,10 @@ class TxBuilder
     }
 
     /**
-     * @param Clause $clauses
-     * @return TxBuilder
+     * @param array $clauses
+     * @return $this
      */
-    public function setClauses(Clause $clauses): TxBuilder
+    public function setClauses(array $clauses): TxBuilder
     {
         $this->clauses = $clauses;
         return $this;
@@ -234,28 +236,41 @@ class TxBuilder
         return $signature;
 
 
-        echo "<pre>";
-        print_r($signature);
-        echo "verify now <br>";
-
-        //Verify Signature
-        $publicKey = $secp->getPublicKey($privateKey);
-
-        $verification = $secp->verify($publicKey, $signature, $msgHash);
-
-        die($verification);
-
     }
 
     /**
+     * @param Base16 $privateKey
+     * @param Signature $signature
+     * @param Base16 $msgHash
+     */
+    public function verifySignature(Base16 $privateKey, Signature $signature, Base16 $msgHash)
+    {
+        $secp = new Secp256k1();
+        $publicKey = $secp->getPublicKey($privateKey);
+
+        $verification = $secp->verify($publicKey, $signature, $msgHash);
+    }
+
+    /**
+     * @param bool $withSign
      * @return RLPEncodedTx
      * @throws IncompleteTxException
      */
-    public function serialize(): RLPEncodedTx
+    public function serialize(bool $withSign = false): RLPEncodedTx
     {
+
 
         $rlp = new RLP();
         $txObj = new RLP\RLPObject();
+
+//        $StringEncode = new StringEncode();
+//        $arr = ["BUSS","TY"];
+//
+//        $StringEncode->Str=$arr;
+//        $data = $StringEncode->serialize();
+//        $txObj->encodeObject( $txObj );
+//        return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
+//        exit();
 
         //Chain Tag
         if (!isset($this->chainTag) || $this->chainTag < 0) {
@@ -282,9 +297,10 @@ class TxBuilder
 //        $txObj->encodeHexString($this->clauses->body->to);
 //        $txObj->encodeInteger($this->clauses->body->value);
 //        $txObj->encodeObject($txObj);
-//        $txObj->encodeHexString($this->clauses->getTo());
-//        $txObj->encodeInteger($this->clauses->getValue());
-//        $txObj->encodeHexString($this->clauses);
+        //As Clauses is an array. So checking it for an index only
+
+        $txObj->encodeHexString($this->clauses[0]->body->to);
+        $txObj->encodeInteger($this->clauses[0]->body->value);
 
 
         //Gas Price Coefficient
@@ -316,31 +332,59 @@ class TxBuilder
 
         $txObj->encodeInteger($this->nonce);
 
-
-//
-//        // To
-//        if (!isset($this->to)) {
-//            throw new IncompleteTxException('To/Payee address is not set');
-//        }
-//
-//        $txObj->encodeHexString($this->to->getAddress());
 //
 //
 
         //Features
-        if (!isset($this->reserved->features) || $this->reserved->features < 0) {
-            throw new IncompleteTxException('Reserved Feature value is not set or is invalid');
-        }
-        $txObj->encodeInteger($this->reserved->features);
+//        if (!isset($this->reserved->features) || $this->reserved->features < 0) {
+//            throw new IncompleteTxException('Reserved Feature value is not set or is invalid');
+//        }
+//        $txObj->encodeInteger($this->reserved->features);
         //Unused
 //        $txObj->encodeInteger($this->reserved->features);
 
         // Signature
-        if (!isset($this->signature)) {
-            throw new IncompleteTxException('Reserved Feature value is not set or is invalid');
-        }
-        $txObj->encodeHexString($this->signature);
+        if ($withSign) {
+            if (!isset($this->signature)) {
+                throw new IncompleteTxException('Sign value is not set or is invalid');
+            }
+            $txObj->encodeHexString($this->signature);
 
+        }
         return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
     }
+
+
+    /**
+     * @param string $serializedTx (without signature prop)
+     * @return string
+     */
+    public function blake2bHash(string $serializedTx): string
+    {
+        $blake = new Blake2b();
+        return $blake->hash($serializedTx);
+    }
+
+}
+
+namespace VchainThor\Transactions\TxBuilder;
+
+use VchainThor\RLP;
+use VchainThor\Transactions\RLPEncodedTx;
+
+class StringEncode
+{
+    public array $Str;
+
+    public function serialize(bool $withSign = false): RLPEncodedTx
+    {
+        $rlp = new RLP();
+        $txObj = new RLP\RLPObject();
+
+        $txObj->encodeString($this->Str[0]);
+        $txObj->encodeString($this->Str[1]);
+//        $txObj->encodeString($StringEncode->Str[2]);
+        return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
+    }
+
 }

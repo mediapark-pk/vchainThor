@@ -2,8 +2,6 @@
 
 use VchainThor\Vchain;
 use VchainThor\Transaction\Transaction;
-use Web3p\RLP\RLP;
-use  FurqanSiddiqui\ECDSA\Curves\Secp256k1;
 
 require_once 'vendor/autoload.php';
 $serverUrl = "http://185.244.248.29";
@@ -27,24 +25,13 @@ $vchain = new Vchain("185.244.248.29", "8669");
 //echo "<pre>";
 
 
-//print_r($data);
+//var_dump($data);
 //die("jere");
 
 $txResponse = new VchainThor\Transactions\TxBuilder();
 //Convert Private Key To Base16
 $b16PrivKey = new \Comely\DataTypes\Buffer\Base16();
 $b16PrivKey->set("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19");
-
-$message = "Sarmad Sohail";
-
-//Convert To Keccak Hash
-$keccakMessage = \VchainThor\Keccak\Keccak::hash($message, 256);
-
-//Convert Keccak Message To Base16
-$b16KeccakMessage = new \Comely\DataTypes\Buffer\Base16();
-$b16KeccakMessage->set($keccakMessage);
-echo "<pre>";
-$sign = $txResponse->signTx($b16PrivKey, $b16KeccakMessage);
 
 
 $txResponse->setChainTag("0x4a");
@@ -54,25 +41,46 @@ $txResponse->setGas(21000);
 $txResponse->setGasPriceCoef(128);
 $txResponse->setExpiration(32);
 $txResponse->setDependsOn("0x5c44dd09ae71b19a5be9975b322a54779aaf35dfbef28c9498d55c4cc66d3309");
-//$signature = ["v" => 0, "r" => "0x" . $sign->r()->value(), "s" => "0x" . $sign->s()->value()];
-$txResponse->setSignature("0x" . $sign->getDER()->value());
 $clauseBody = new \VchainThor\Clause\clauseBody("0x03596a5ac91e97fc7ee6e4d7088683fe4b179dfd", 25);
 
 $clause = new \VchainThor\Clause\Clause($clauseBody);
 
-$txResponse->setClauses($clause);
+
+$txResponse->setClauses([$clause]);
 $reserved = new \VchainThor\Transaction\Reserved(32, []);
 $txResponse->setReserved($reserved);
 
-print_r("<pre>");
-print_r($txResponse->serialize());
+echo("<pre>");
+echo "Without Signature Tx Serialization";
+echo "<br>";
+$tx = ($txResponse->serialize());
+$tx = ($tx->serialized()->hexits(true));
+var_dump($tx);
+
+
+//Hash With Blake2b
+$hashedBlake = $txResponse->blake2bHash($tx);
+echo "<br>";
+
+echo "Signature";
+echo "<br>";
+//Signature with secp
+//Convert Keccak Message To Base16
+$b16KeccakMessage = new \Comely\DataTypes\Buffer\Base16();
+$b16KeccakMessage->set(bin2hex($hashedBlake));
+$sign = $txResponse->signTx($b16PrivKey, $b16KeccakMessage);
+var_dump($sign);
+echo "<br>";
+
+//Complete Tx
+echo "Complete Tx";
+echo "<br>";
+$txResponse->setSignature($sign->getDER()->hexits(true));
+$tx = ($txResponse->serialize(true));
+
+var_dump($tx);
 
 //\VchainThor\Transactions\TxBuilder::Decode($txResponse->serialize());
-die();
-
-$txResponse = Transaction::generateTx();
-print_r("<pre>");
-print_r($txResponse);
 die();
 
 /*END Post Transactions*/
@@ -99,7 +107,7 @@ $params = array(
 //$result = $vchain->accounts($params);
 $result = $vchain->networkPeers();
 echo "<pre>";
-print_r($result);
+var_dump($result);
 die();
 //$result = $vchain->accountAddressCode(["0x5034aa590125b64023a0262112b98d72e3c8e40e"]);
 
@@ -137,12 +145,12 @@ try {
 //    $result = $vchain->transactions(["0x9bcc6526a76ae560244f698805cc001977246cb92c2b4f1e2b7a204e445409ea"]);
     $result = $vchain->blocks("best");
 } catch (Exception $e) {
-    print_r($e);
+    var_dump($e);
 }
 
 
 echo "<pre>";
-print_r($result);
+var_dump($result);
 die();
 
 
@@ -184,7 +192,7 @@ die();
 //
 //
 //    echo "<pre>";
-//    print_r($result);
+//    var_dump($result);
 //}catch (Exception $e){
 //    echo $e->getMessage();
 //}
@@ -201,7 +209,7 @@ try {
     $result = $vchain->transactions($params);
 
     echo '<pre>';
-    print_r($result);
+    var_dump($result);
 } catch (Exception $e) {
     echo $e->getMessage();
 }
