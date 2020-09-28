@@ -8,25 +8,7 @@ $serverUrl = "http://185.244.248.29";
 
 $vchain = new Vchain("185.244.248.29", "8669");
 
-//$data = $vchain->account->accountDetails("0x5034aa590125b64023a0262112b98d72e3c8e40e");
 
-//$data = $vchain->account->retrieveAccountCode("0x5034aa590125b64023a0262112b98d72e3c8e40e");
-//$data = $vchain->account->retrieveAccountValue("0x5034aa590125b64023a0262112b98d72e3c8e40e","0x0000000000000000000000000000000000000000000000000000000000000001");
-//$data = $vchain->block->getBlock("best");
-
-//$data = $vchain->logs->getEventLogs(0, 1000000, 0, 10, "0x0000000000000000000000000000456E65726779", ["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef","0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e"]);
-//$data = $vchain->logs->getTransferLogs(0, 1000000, 0, 10, "0x0000000000000000000000000000456E65726779", "0xe59d475abe695c7f67a8a2321f33a856b0b4c71d", "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed");
-//$data = $vchain->node->getConnectedPeers();
-//$data = $vchain->subscription->subscribeNewBlock();
-//$data = $vchain->debug->createTracer(null, "0x000dabb4d6f0a80ad7ad7cd0e07a1f20b546db0730d869d5ccb0dd2a16e7595b/0/0");
-//$data = $vchain->debug->debugStorageRange("0xa4627036e2095eb71c2341054daa63577c062498", "0x0000000000000000000000000000000000000000000000000000000000000000","0x000edefb448685f9c72fc2b946980ef51d8d208bbaa4d3fdcf0c57d4847aca2e/0/0");
-//$data = $vchain->transactionApi->createTransaction("0x605f10b7fea015db47c21bcc4d85578a621e88b1e8442644c8765b93439a6069");
-//$data = $vchain->transactionApi->getTransactionReceipt("0x605f10b7fea015db47c21bcc4d85578a621e88b1e8442644c8765b93439a6069");
-//echo "<pre>";
-
-
-//var_dump($data);
-//die("jere");
 
 $txResponse = new VchainThor\Transactions\TxBuilder();
 //Convert Private Key To Base16
@@ -64,8 +46,10 @@ echo "<br>";
 
 echo "Signature";
 echo "<br>";
-//Signature with secp
-//Convert Keccak Message To Base16
+
+//Signature with SECP
+
+//Convert Blake Message To Base16
 $b16KeccakMessage = new \Comely\DataTypes\Buffer\Base16();
 $b16KeccakMessage->set(bin2hex($hashedBlake));
 $sign = $txResponse->signTx($b16PrivKey, $b16KeccakMessage);
@@ -84,6 +68,28 @@ var_dump($tx);
 die();
 
 /*END Post Transactions*/
+
+
+
+//$data = $vchain->account->accountDetails("0x5034aa590125b64023a0262112b98d72e3c8e40e");
+
+//$data = $vchain->account->retrieveAccountCode("0x5034aa590125b64023a0262112b98d72e3c8e40e");
+//$data = $vchain->account->retrieveAccountValue("0x5034aa590125b64023a0262112b98d72e3c8e40e","0x0000000000000000000000000000000000000000000000000000000000000001");
+//$data = $vchain->block->getBlock("best");
+
+//$data = $vchain->logs->getEventLogs(0, 1000000, 0, 10, "0x0000000000000000000000000000456E65726779", ["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef","0x0000000000000000000000005034aa590125b64023a0262112b98d72e3c8e40e"]);
+//$data = $vchain->logs->getTransferLogs(0, 1000000, 0, 10, "0x0000000000000000000000000000456E65726779", "0xe59d475abe695c7f67a8a2321f33a856b0b4c71d", "0x7567d83b7b8d80addcb281a71d54fc7b3364ffed");
+//$data = $vchain->node->getConnectedPeers();
+//$data = $vchain->subscription->subscribeNewBlock();
+//$data = $vchain->debug->createTracer(null, "0x000dabb4d6f0a80ad7ad7cd0e07a1f20b546db0730d869d5ccb0dd2a16e7595b/0/0");
+//$data = $vchain->debug->debugStorageRange("0xa4627036e2095eb71c2341054daa63577c062498", "0x0000000000000000000000000000000000000000000000000000000000000000","0x000edefb448685f9c72fc2b946980ef51d8d208bbaa4d3fdcf0c57d4847aca2e/0/0");
+//$data = $vchain->transactionApi->createTransaction("0x605f10b7fea015db47c21bcc4d85578a621e88b1e8442644c8765b93439a6069");
+//$data = $vchain->transactionApi->getTransactionReceipt("0x605f10b7fea015db47c21bcc4d85578a621e88b1e8442644c8765b93439a6069");
+//echo "<pre>";
+
+
+//var_dump($data);
+//die("jere");
 
 $params = array(
     'clauses' =>
