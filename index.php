@@ -9,21 +9,24 @@ $serverUrl = "http://185.244.248.29";
 $vchain = new Vchain("185.244.248.29", "8669");
 
 
-
-$txResponse = new VchainThor\Transactions\TxBuilder();
+$txResponse = new VchainThor\Transactions\body();
 //Convert Private Key To Base16
 $b16PrivKey = new \Comely\DataTypes\Buffer\Base16();
 $b16PrivKey->set("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19");
 
 
-$txResponse->setChainTag("0x4a");
-$txResponse->setNonce(5475834264257970848);
-$txResponse->setBlockRef("7023094-f244f89b");
-$txResponse->setGas(21000);
-$txResponse->setGasPriceCoef(128);
+
+
+
+
+$txResponse->setChainTag(39);
+$txResponse->setNonce(101);
+$txResponse->setBlockRef("2864434397");
+$txResponse->setGas(21);
+$txResponse->setGasPriceCoef(0);
 $txResponse->setExpiration(32);
-$txResponse->setDependsOn("0x5c44dd09ae71b19a5be9975b322a54779aaf35dfbef28c9498d55c4cc66d3309");
-$clauseBody = new \VchainThor\Clause\clauseBody("0x03596a5ac91e97fc7ee6e4d7088683fe4b179dfd", 25);
+$txResponse->setDependsOn("");
+$clauseBody = new \VchainThor\Clause\clauseBody("0x9fdee3753061cc9033f8bcfb9fd81c18cc137f05", 1);
 
 $clause = new \VchainThor\Clause\Clause($clauseBody);
 
@@ -35,9 +38,14 @@ $txResponse->setReserved($reserved);
 echo("<pre>");
 echo "Without Signature Tx Serialization";
 echo "<br>";
-$tx = ($txResponse->serialize());
-$tx = ($tx->serialized()->hexits(true));
-var_dump($tx);
+$tx = ($txResponse);
+//$tx = ($tx->serialized()->hexits(true));
+
+//Transaction Object
+$transaction = new \VchainThor\Transactions\Transaction();
+$transaction->body = $tx;
+var_dump($transaction->serialize());
+exit();
 
 
 //Hash With Blake2b
@@ -68,7 +76,6 @@ var_dump($tx);
 die();
 
 /*END Post Transactions*/
-
 
 
 //$data = $vchain->account->accountDetails("0x5034aa590125b64023a0262112b98d72e3c8e40e");
@@ -220,4 +227,3 @@ try {
     echo $e->getMessage();
 }
 die();
-

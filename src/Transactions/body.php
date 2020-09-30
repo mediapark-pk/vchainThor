@@ -1,18 +1,8 @@
 <?php
-/*
- * This file is a part of "furqansiddiqui/ethereum-php" package.
- * https://github.com/furqansiddiqui/ethereum-php
- *
- * Copyright (c) Furqan A. Siddiqui <hello@furqansiddiqui.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code or visit following link:
- * https://github.com/furqansiddiqui/ethereum-php/blob/master/LICENSE
- */
 
-declare(strict_types=1);
 
 namespace VchainThor\Transactions;
+
 
 use Comely\DataTypes\Buffer\Base16;
 use deemru\Blake2b;
@@ -22,14 +12,14 @@ use VchainThor\Exception\IncompleteTxException;
 use VchainThor\RLP;
 use VchainThor\Clause\Clause;
 use VchainThor\Transaction\Reserved;
-use VchainThor\Transactions\TxBuilder\StringEncode;
+use VchainThor\Transactions\body\StringEncode;
 
 
 /**
- * Class TxBuilder
+ * Class body
  * @package VchainThor\Transactions
  */
-class TxBuilder
+class body
 {
     /** @var string */
     private string $chainTag;
@@ -67,7 +57,7 @@ class TxBuilder
     /**
      * @param Ethereum $eth
      * @param RLPEncodedTx $encoded
-     * @return static
+     * @return \VchainThor\Transactions\Transaction\body
      * @throws \FurqanSiddiqui\Ethereum\Exception\AccountsException
      */
     public static function Decode(RLPEncodedTx $encoded): self
@@ -107,17 +97,17 @@ class TxBuilder
 
 
     /**
-     * TxBuilder constructor.
+     * body constructor.
      */
     public function __construct()
     {
     }
 
     /**
-     * @param string $chainTag
-     * @return TxBuilder
+     * @param string|null $chainTag
+     * @return $this
      */
-    public function setChainTag(string $chainTag): TxBuilder
+    public function setChainTag(?string $chainTag): body
     {
         $this->chainTag = $chainTag;
         return $this;
@@ -125,9 +115,9 @@ class TxBuilder
 
     /**
      * @param int $blockRef
-     * @return TxBuilder
+     * @return body
      */
-    public function setBlockRef(int $blockRef): TxBuilder
+    public function setBlockRef(int $blockRef): body
     {
         $this->blockRef = $blockRef;
         return $this;
@@ -135,9 +125,9 @@ class TxBuilder
 
     /**
      * @param int $expiration
-     * @return TxBuilder
+     * @return body
      */
-    public function setExpiration(int $expiration): TxBuilder
+    public function setExpiration(int $expiration): body
     {
         $this->expiration = $expiration;
         return $this;
@@ -147,7 +137,7 @@ class TxBuilder
      * @param array $clauses
      * @return $this
      */
-    public function setClauses(array $clauses): TxBuilder
+    public function setClauses(array $clauses): body
     {
         $this->clauses = $clauses;
         return $this;
@@ -155,9 +145,9 @@ class TxBuilder
 
     /**
      * @param int $gasPriceCoef
-     * @return TxBuilder
+     * @return body
      */
-    public function setGasPriceCoef(int $gasPriceCoef): TxBuilder
+    public function setGasPriceCoef(int $gasPriceCoef): body
     {
         $this->gasPriceCoef = $gasPriceCoef;
         return $this;
@@ -165,9 +155,9 @@ class TxBuilder
 
     /**
      * @param int $gas
-     * @return TxBuilder
+     * @return body
      */
-    public function setGas(int $gas): TxBuilder
+    public function setGas(int $gas): body
     {
         $this->gas = $gas;
         return $this;
@@ -175,9 +165,9 @@ class TxBuilder
 
     /**
      * @param int $nonce
-     * @return TxBuilder
+     * @return body
      */
-    public function setNonce(int $nonce): TxBuilder
+    public function setNonce(int $nonce): body
     {
         $this->nonce = $nonce;
         return $this;
@@ -185,9 +175,9 @@ class TxBuilder
 
     /**
      * @param string|null $dependsOn
-     * @return TxBuilder
+     * @return body
      */
-    public function setDependsOn(?string $dependsOn): TxBuilder
+    public function setDependsOn(?string $dependsOn): body
     {
         $this->dependsOn = $dependsOn;
         return $this;
@@ -195,9 +185,9 @@ class TxBuilder
 
     /**
      * @param Reserved $reserved
-     * @return TxBuilder
+     * @return body
      */
-    public function setReserved(Reserved $reserved): TxBuilder
+    public function setReserved(Reserved $reserved): body
     {
         $this->reserved = $reserved;
         return $this;
@@ -207,7 +197,7 @@ class TxBuilder
      * @param string $signature
      * @return $this
      */
-    public function setSignature(string $signature): TxBuilder
+    public function setSignature(string $signature): body
     {
         $this->signature = $signature;
         return $this;
@@ -253,37 +243,37 @@ class TxBuilder
 
     /**
      * @param bool $withSign
-     * @return RLPEncodedTx
+     * @return RLP\RLPObject
      * @throws IncompleteTxException
      */
-    public function serialize(bool $withSign = false): RLPEncodedTx
+    public function serialize(bool $withSign = false): RLP\RLPObject
     {
 
 
         $rlp = new RLP();
         $txObj = new RLP\RLPObject();
-        $strObj = new RLP\RLPObject();
+        $clauseObj = new RLP\RLPObject();
 
-        $StringEncode = new StringEncode();
-
-        $arr = ["BUSS", "TYY"];
-
-
-        $StringEncode->Str = $arr;
-
-
-        $txObj->encodeString($StringEncode->Str[0]);
-        $txObj->encodeString($StringEncode->Str[1]);
-//        $txObj->encodeString($StringEncode->Str[2]);
-
-
-        $strObj->encodeObject($txObj);
-
-        $data = new RLPEncodedTx($strObj->getRLPEncoded($rlp));
-
-
-        var_dump($data);
-        exit();
+//        $StringEncode = new StringEncode();
+//
+//        $arr = ["BUSS", "TYY"];
+//
+//
+//        $StringEncode->Str = $arr;
+//
+//
+//        $txObj->encodeString($StringEncode->Str[0]);
+//        $txObj->encodeString($StringEncode->Str[1]);
+////        $txObj->encodeString($StringEncode->Str[2]);
+//
+//
+//        $strObj->encodeObject($txObj);
+//
+//        $data = new RLPEncodedTx($strObj->getRLPEncoded($rlp));
+//
+//
+//        var_dump($data);
+//        exit();
 //        $txObj->encodeObject( $txObj );
 //        return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
 //        exit();
@@ -292,7 +282,7 @@ class TxBuilder
         if (!isset($this->chainTag) || $this->chainTag < 0) {
             throw new IncompleteTxException('Chain Tag value is not set or is invalid');
         }
-        $txObj->encodeHexString($this->chainTag);
+        $txObj->encodeInteger($this->chainTag);
 
         //BlockRef
         if (!isset($this->blockRef) || $this->blockRef < 0) {
@@ -315,8 +305,10 @@ class TxBuilder
 //        $txObj->encodeObject($txObj);
         //As Clauses is an array. So checking it for an index only
 
-        $txObj->encodeHexString($this->clauses[0]->body->to);
-        $txObj->encodeInteger($this->clauses[0]->body->value);
+        $clauseObj->encodeHexString($this->clauses[0]->body->to);
+        $clauseObj->encodeInteger($this->clauses[0]->body->value);
+        $clauseObj->encodeHexString("");
+        $txObj->encodeObject($clauseObj);
 
 
         //Gas Price Coefficient
@@ -338,7 +330,7 @@ class TxBuilder
         if (!isset($this->dependsOn)) {
             throw new IncompleteTxException('Depends On value is not set or is invalid');
         }
-        $txObj->encodeHexString($this->dependsOn);
+        $txObj->encodeHexString($this->dependsOn??"");
 
 
         // Nonce
@@ -346,7 +338,7 @@ class TxBuilder
             throw new IncompleteTxException('Nonce value is not set or is invalid');
         }
 
-        $txObj->encodeInteger($this->nonce);
+//        $txObj->encodeInteger($this->nonce);
 
 //
 //
@@ -355,9 +347,12 @@ class TxBuilder
 //        if (!isset($this->reserved->features) || $this->reserved->features < 0) {
 //            throw new IncompleteTxException('Reserved Feature value is not set or is invalid');
 //        }
-//        $txObj->encodeInteger($this->reserved->features);
+        $featureObj = new  RLP\RLPObject();
+        $featureObj->encodeInteger(0);
         //Unused
-//        $txObj->encodeInteger($this->reserved->features);
+        $featureObj->encodeHexString("");
+
+        $txObj->encodeObject($featureObj);
 
         // Signature
         if ($withSign) {
@@ -367,6 +362,11 @@ class TxBuilder
             $txObj->encodeHexString($this->signature);
 
         }
+        $txObj->encodeHexString("");
+
+
+
+        return $txObj;
         return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
     }
 
@@ -381,29 +381,5 @@ class TxBuilder
         return $blake->hash($serializedTx);
     }
 
-}
-
-namespace VchainThor\Transactions\TxBuilder;
-
-use VchainThor\RLP;
-use VchainThor\Transactions\RLPEncodedTx;
-
-class StringEncode
-{
-    public array $Str;
-
-
-    public function serialize(bool $withSign = false): RLPEncodedTx
-    {
-        $rlp = new RLP();
-        $txObj = new RLP\RLPObject();
-        $arr = ["BUSS", "TYY"];
-        $this->Str = $arr;
-
-        $txObj->encodeString($this->Str[0]);
-        $txObj->encodeString($this->Str[1]);
-//        $txObj->encodeString($StringEncode->Str[2]);
-        return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
-    }
 
 }
