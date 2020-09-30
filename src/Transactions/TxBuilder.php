@@ -39,7 +39,7 @@ class TxBuilder
     /** @var integer */
     private int $expiration;
 
-    /** @var array  */
+    /** @var array */
     private array $clauses;
 
     /** @var integer */
@@ -262,12 +262,28 @@ class TxBuilder
 
         $rlp = new RLP();
         $txObj = new RLP\RLPObject();
+        $strObj = new RLP\RLPObject();
 
-//        $StringEncode = new StringEncode();
-//        $arr = ["BUSS","TY"];
-//
-//        $StringEncode->Str=$arr;
-//        $data = $StringEncode->serialize();
+        $StringEncode = new StringEncode();
+
+        $arr = ["BUSS", "TYY"];
+
+
+        $StringEncode->Str = $arr;
+
+
+        $txObj->encodeString($StringEncode->Str[0]);
+        $txObj->encodeString($StringEncode->Str[1]);
+//        $txObj->encodeString($StringEncode->Str[2]);
+
+
+        $strObj->encodeObject($txObj);
+
+        $data = new RLPEncodedTx($strObj->getRLPEncoded($rlp));
+
+
+        var_dump($data);
+        exit();
 //        $txObj->encodeObject( $txObj );
 //        return new RLPEncodedTx($txObj->getRLPEncoded($rlp));
 //        exit();
@@ -376,10 +392,13 @@ class StringEncode
 {
     public array $Str;
 
+
     public function serialize(bool $withSign = false): RLPEncodedTx
     {
         $rlp = new RLP();
         $txObj = new RLP\RLPObject();
+        $arr = ["BUSS", "TYY"];
+        $this->Str = $arr;
 
         $txObj->encodeString($this->Str[0]);
         $txObj->encodeString($this->Str[1]);
